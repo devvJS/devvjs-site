@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  @apply bg-charcoal text-text-primary font-sans antialiased;
+  margin: 0;
+  min-height: 100svh;
+  overflow-x: hidden;
+  background-color: #0d0f12;
+  background-image:
+    radial-gradient(
+      ellipse at top,
+      rgba(0, 229, 255, 0.06) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at bottom,
+      rgba(57, 255, 20, 0.05) 0%,
+      transparent 55%
+    ),
+    linear-gradient(
+      to right,
+      rgba(226, 232, 240, 0.035) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(226, 232, 240, 0.035) 1px,
+      transparent 1px
+    );
+  background-size: auto, auto, 42px 42px, 42px 42px;
+  background-attachment: fixed;
+}

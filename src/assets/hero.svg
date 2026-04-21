@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" preserveAspectRatio="xMidYMid meet">
+  <style>
+    .brace { fill: #39ff14; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-weight: 700; }
+    .name  { fill: #e2e8f0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-weight: 500; }
+    .cursor { fill: #39ff14; animation: blink 1s steps(2, start) infinite; }
+    @keyframes blink { to { visibility: hidden; } }
+  </style>
+  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-size="64">
+    <tspan class="brace">{</tspan><tspan class="name">devvJS</tspan><tspan class="brace">}</tspan><tspan class="cursor" dx="4">█</tspan>
+  </text>
+</svg>
