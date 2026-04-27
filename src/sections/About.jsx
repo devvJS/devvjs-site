@@ -1,5 +1,6 @@
 import SectionWrapper from '../components/SectionWrapper'
 import TerminalCard from '../components/TerminalCard'
+import GitHubStats from '../components/GitHubStats'
 
 function About() {
     return (
@@ -79,6 +80,8 @@ function About() {
                     </TerminalCard>
                 </div>
             </div>
+
+            <GitHubStats />
         </SectionWrapper>
     )
 }
