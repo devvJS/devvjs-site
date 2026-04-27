@@ -31,6 +31,7 @@ function Hero() {
           <TypingEffect
             strings={[
               'full-stack developer',
+              'AI engineer',
               'problem solver',
               'ui tinkerer',
               'systems thinker',

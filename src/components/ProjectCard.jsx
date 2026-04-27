@@ -34,7 +34,38 @@ function GitHubIcon() {
   )
 }
 
-function ProjectCard({ title, description, tags, liveUrl, repoUrl }) {
+function StarIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="h-3.5 w-3.5"
+      aria-hidden="true"
+    >
+      <path d="M12 2 9.19 8.62 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.62Z" />
+    </svg>
+  )
+}
+
+function formatRelative(iso) {
+  if (!iso) return null
+  const then = new Date(iso).getTime()
+  if (Number.isNaN(then)) return null
+  const diffMs = Date.now() - then
+  const day = 86_400_000
+  const days = Math.floor(diffMs / day)
+  if (days < 1) return 'today'
+  if (days < 7) return `${days}d ago`
+  if (days < 30) return `${Math.floor(days / 7)}w ago`
+  if (days < 365) return `${Math.floor(days / 30)}mo ago`
+  return `${Math.floor(days / 365)}y ago`
+}
+
+function ProjectCard({ title, description, tags, liveUrl, repoUrl, stars, language, updatedAt }) {
+  const updated = formatRelative(updatedAt)
+  const hasMeta = typeof stars === 'number' || language || updated
+
   return (
     <TerminalCard title={`~/projects/${title}`} className="h-full flex flex-col">
       <div className="flex flex-col h-full">
@@ -55,6 +86,29 @@ function ProjectCard({ title, description, tags, liveUrl, repoUrl }) {
                 {tag}
               </span>
             ))}
+          </div>
+        )}
+
+        {hasMeta && (
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-3 font-mono text-xs text-text-secondary">
+            {language && (
+              <span className="inline-flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-accent-cyan" aria-hidden="true" />
+                {language}
+              </span>
+            )}
+            {typeof stars === 'number' && (
+              <span className="inline-flex items-center gap-1">
+                <StarIcon />
+                {stars}
+              </span>
+            )}
+            {updated && (
+              <span className="inline-flex items-center gap-1">
+                <span className="text-accent-green">↻</span>
+                {updated}
+              </span>
+            )}
           </div>
         )}
 

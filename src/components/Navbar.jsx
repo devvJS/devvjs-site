@@ -1,18 +1,23 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import useActiveSection from '../hooks/useActiveSection'
 
-const NAV_LINKS = [
-  { href: '#about', id: 'about', label: 'About' },
-  { href: '#skills', id: 'skills', label: 'Skills' },
-  { href: '#projects', id: 'projects', label: 'Projects' },
-  { href: '#contact', id: 'contact', label: 'Contact' },
+const SECTION_LINKS = [
+  { hash: '#about', id: 'about', label: 'About' },
+  { hash: '#skills', id: 'skills', label: 'Skills' },
+  { hash: '#projects', id: 'projects', label: 'Projects' },
+  { hash: '#contact', id: 'contact', label: 'Contact' },
 ]
 
-const SECTION_IDS = ['hero', ...NAV_LINKS.map((l) => l.id)]
+const SECTION_IDS = ['hero', ...SECTION_LINKS.map((l) => l.id)]
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const activeId = useActiveSection(SECTION_IDS)
+  const location = useLocation()
+  const navigate = useNavigate()
+  const onHome = location.pathname === '/'
+  const activeId = useActiveSection(onHome ? SECTION_IDS : [])
+  const onResume = location.pathname === '/resume'
 
   useEffect(() => {
     if (!menuOpen) return
@@ -23,36 +28,43 @@ function Navbar() {
     return () => document.removeEventListener('keydown', onKey)
   }, [menuOpen])
 
-  const handleAnchorClick = useCallback((e, href) => {
-    const id = href.slice(1)
-    const el = document.getElementById(id)
-    if (!el) return
-    e.preventDefault()
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    if (history.replaceState) history.replaceState(null, '', href)
-    setMenuOpen(false)
-  }, [])
+  const handleSectionClick = useCallback(
+    (e, hash) => {
+      const id = hash.slice(1)
+      setMenuOpen(false)
+      if (!onHome) {
+        navigate(`/${hash}`)
+        return
+      }
+      const el = document.getElementById(id)
+      if (!el) return
+      e.preventDefault()
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      if (history.replaceState) history.replaceState(null, '', hash)
+    },
+    [onHome, navigate],
+  )
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 bg-charcoal/80 backdrop-blur border-b border-text-secondary/30">
       <nav className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-        <a
-          href="#top"
-          onClick={(e) => handleAnchorClick(e, '#top')}
+        <Link
+          to="/"
+          onClick={() => setMenuOpen(false)}
           className="font-mono text-accent-green text-lg tracking-tight hover:text-accent-cyan transition-colors"
           aria-label="Home"
         >
           &gt; devvjs_<span className="animate-pulse">█</span>
-        </a>
+        </Link>
 
         <ul className="hidden sm:flex items-center gap-4 sm:gap-6">
-          {NAV_LINKS.map((link) => {
-            const isActive = activeId === link.id
+          {SECTION_LINKS.map((link) => {
+            const isActive = onHome && activeId === link.id
             return (
-              <li key={link.href}>
+              <li key={link.hash}>
                 <a
-                  href={link.href}
-                  onClick={(e) => handleAnchorClick(e, link.href)}
+                  href={onHome ? link.hash : `/${link.hash}`}
+                  onClick={(e) => handleSectionClick(e, link.hash)}
                   aria-current={isActive ? 'true' : undefined}
                   className={`font-mono text-sm transition-colors border-b ${
                     isActive
@@ -65,6 +77,19 @@ function Navbar() {
               </li>
             )
           })}
+          <li>
+            <Link
+              to="/resume"
+              aria-current={onResume ? 'true' : undefined}
+              className={`font-mono text-sm transition-colors border-b ${
+                onResume
+                  ? 'text-accent-green border-accent-green'
+                  : 'text-text-primary border-transparent hover:text-accent-green'
+              }`}
+            >
+              Resume
+            </Link>
+          </li>
         </ul>
 
         <button
@@ -87,13 +112,13 @@ function Navbar() {
           className="sm:hidden border-t border-text-secondary/30 bg-charcoal/95 backdrop-blur"
         >
           <ul className="mx-auto max-w-6xl px-4 py-3 flex flex-col gap-1">
-            {NAV_LINKS.map((link) => {
-              const isActive = activeId === link.id
+            {SECTION_LINKS.map((link) => {
+              const isActive = onHome && activeId === link.id
               return (
-                <li key={link.href}>
+                <li key={link.hash}>
                   <a
-                    href={link.href}
-                    onClick={(e) => handleAnchorClick(e, link.href)}
+                    href={onHome ? link.hash : `/${link.hash}`}
+                    onClick={(e) => handleSectionClick(e, link.hash)}
                     aria-current={isActive ? 'true' : undefined}
                     className={`block font-mono text-sm py-2 px-2 rounded transition-colors ${
                       isActive
@@ -107,6 +132,21 @@ function Navbar() {
                 </li>
               )
             })}
+            <li>
+              <Link
+                to="/resume"
+                onClick={() => setMenuOpen(false)}
+                aria-current={onResume ? 'true' : undefined}
+                className={`block font-mono text-sm py-2 px-2 rounded transition-colors ${
+                  onResume
+                    ? 'text-accent-green bg-accent-green/10'
+                    : 'text-text-primary hover:text-accent-green hover:bg-accent-green/5'
+                }`}
+              >
+                <span className="text-text-secondary mr-2">$</span>
+                Resume
+              </Link>
+            </li>
           </ul>
         </div>
       )}
