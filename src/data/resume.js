@@ -1,4 +1,4 @@
-export const resumeFile = '/resume/Dakota_Coppage_Resume.pdf'
+export const resumeFile = '/resume.pdf'
 
 export const header = {
   name: 'Dakota Coppage',
