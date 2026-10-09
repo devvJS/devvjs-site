@@ -41,19 +41,19 @@ export function createLoop({ step, render, now, requestFrame, cancelFrame }) {
     const dt = Math.max(0, t - last)
     last = t
 
-    // pause() empties the accumulator, and nothing fills it while paused.
-    if (!paused) {
-      acc += dt
-      let steps = 0
-      while (acc >= STEP_MS && steps < MAX_STEPS) {
-        step(STEP_MS)
-        // step() may stop or restart the loop; this frame is then over.
-        if (token !== live) return
-        acc -= STEP_MS
-        steps++
-      }
-      if (acc >= STEP_MS) acc = 0
+    // Nothing fills the accumulator while paused.
+    if (!paused) acc += dt
+    let steps = 0
+    // step() may pause the loop (no further steps this frame), or stop or
+    // restart it (this frame is then over).
+    while (!paused && acc >= STEP_MS && steps < MAX_STEPS) {
+      step(STEP_MS)
+      if (token !== live) return
+      acc -= STEP_MS
+      steps++
     }
+    // Paused: keep the accumulator empty. Capped: drop the time beyond the cap.
+    if (paused || acc >= STEP_MS) acc = 0
 
     render(acc / STEP_MS)
     if (token !== live) return
