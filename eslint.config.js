@@ -28,7 +28,7 @@ export default defineConfig([
   },
   {
     // Node code: the server, the api/*.js handlers, tests and tool configs.
-    files: ['api/**/*.js', 'server/**/*.js', 'server.js', 'tests/**/*.js', 'vitest.config.js'],
+    files: ['api/**/*.js', 'server/**/*.js', 'server.js', 'tests/**/*.js', 'vitest.config.js', 'playwright.config.js', 'e2e/**/*.js'],
     languageOptions: {
       globals: globals.node,
     },
