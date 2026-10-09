@@ -43,8 +43,15 @@ describe('static files and SPA fallback', () => {
     expect(res.headers['cache-control']).toBe('no-cache')
   })
 
-  it('serves index.html for a deep link with no-cache', async () => {
+  it('serves index.html with a real 404 and no-cache for an unknown deep link', async () => {
     const res = await request(app).get('/projects/foo')
+    expect(res.status).toBe(404)
+    expect(res.text).toContain('SPA-INDEX')
+    expect(res.headers['cache-control']).toBe('no-cache')
+  })
+
+  it('serves index.html with 200 and no-cache for a deep link on a known route', async () => {
+    const res = await request(app).get('/resume/')
     expect(res.status).toBe(200)
     expect(res.text).toContain('SPA-INDEX')
     expect(res.headers['cache-control']).toBe('no-cache')

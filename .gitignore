@@ -10,3 +10,6 @@ dist
 # Documents
 /docs
 .env*.local
+
+test-results
+playwright-report

@@ -29,6 +29,10 @@ Environment:
 
 `GET /healthz` returns `{"ok":true}` for Railway's health check. `npm test` runs the server tests.
 
+Paths outside the site's routes (`src/routes.js`: `/`, `/resume`, `/terminal-chaos`, each with or
+without a trailing slash) get `index.html` with a real `404` status, and the app shows its 404 page.
+Missing files (a dot in the last segment) still get `404 {"error":"not_found"}`.
+
 The proxy sets `X-Forwarded-For`, `-Proto` and `-Host`, appending to any values that came in, and
 `X-Forwarded-Host` is the incoming `Host`. Only the entries added by the hops in front of the
 tracker are real (this server's entry is the last one); everything earlier is whatever the client

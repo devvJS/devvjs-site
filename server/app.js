@@ -5,6 +5,7 @@ import githubStats from '../api/github-stats.js'
 import projects from '../api/projects.js'
 import { cached } from './cache.js'
 import { createTrackerProxy, DEFAULT_PROXY_TIMEOUT_MS } from './proxy.js'
+import { isKnownRoute } from '../src/routes.js'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -60,15 +61,21 @@ export function createApp({
   )
 
   // SPA fallback, the same rule as vercel.json: no /api/, no /job-tracker,
-  // and no dot in the last path segment.
+  // and no dot in the last path segment. A known route (src/routes.js) gets
+  // index.html with 200; any other path gets index.html with a real 404, and
+  // the app renders its 404 page.
   app.use((req, res, next) => {
     if (req.method !== 'GET' && req.method !== 'HEAD') return next()
     const pathname = req.path
     if (pathname.startsWith('/api/') || pathname.startsWith('/job-tracker')) return next()
     const last = pathname.slice(pathname.lastIndexOf('/') + 1)
     if (last.includes('.')) return next()
+    const known = isKnownRoute(pathname)
+    res.status(known ? 200 : 404)
     res.setHeader('Cache-Control', NO_CACHE)
-    res.sendFile(indexFile, { cacheControl: false }, (err) => {
+    // A 404 is always the whole page: no 206 for a Range request. (send never
+    // answers 304 for a non-2xx status, so conditional requests stay 404 too.)
+    res.sendFile(indexFile, { cacheControl: false, acceptRanges: known }, (err) => {
       if (err) next(err)
     })
   })

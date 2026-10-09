@@ -5,6 +5,8 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import Resume from './pages/Resume'
+import NotFound from './pages/NotFound'
+import { ROUTES } from './routes'
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -15,8 +17,9 @@ function App() {
       <Navbar />
       <main className="pt-14">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/resume" element={<Resume />} />
+          <Route path={ROUTES.home} element={<Home />} />
+          <Route path={ROUTES.resume} element={<Resume />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />
