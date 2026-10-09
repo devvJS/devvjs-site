@@ -26,4 +26,11 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
+  {
+    // Node code: the server, the api/*.js handlers, tests and tool configs.
+    files: ['api/**/*.js', 'server/**/*.js', 'server.js', 'tests/**/*.js', 'vitest.config.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ])
