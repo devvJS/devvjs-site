@@ -26,6 +26,13 @@ Environment:
 - `GITHUB_TOKEN`: GitHub token used by `/api/github-stats` (required there) and `/api/projects`.
 - `TRACKER_URL`: origin of the job tracker service (default
   `http://job-tracker.railway.internal:8080`).
+- `CANONICAL_HOST`: set **only in production**, to `devvjs.dev`. Requests whose `Host` is
+  `www.devvjs.dev` (any case, any port) are redirected to `https://devvjs.dev` with the path and
+  query unchanged: `301` for GET and HEAD, `308` (keeps method and body) for everything else. This
+  runs before everything, including `/healthz` and the tracker proxy, so sign-in cookies and the
+  OAuth callback only ever see the apex. `X-Forwarded-Host` is never read. It must be the apex as
+  a bare hostname: a value with a scheme, path or port, or one starting with `www.`, stops the
+  server at startup. Leave it unset (or empty) on staging and locally, where nothing is redirected.
 
 `GET /healthz` returns `{"ok":true}` for Railway's health check. `npm test` runs the server tests.
 
