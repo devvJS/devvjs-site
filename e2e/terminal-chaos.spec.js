@@ -167,3 +167,19 @@ test.describe('on a 320x568 touch phone', () => {
     expect(errors).toEqual([])
   })
 })
+
+test('the game chunk is fetched only on /terminal-chaos, never on the home page', async ({ page }) => {
+  const chunk = /\/assets\/TerminalChaos-.*\.js$/
+  const requested = []
+  page.on('request', (r) => {
+    if (chunk.test(new URL(r.url()).pathname)) requested.push(r.url())
+  })
+  await page.goto('/')
+  await expect(page.locator('#hero')).toBeVisible()
+  await page.waitForTimeout(1000)
+  expect(requested).toEqual([])
+
+  await page.goto('/terminal-chaos')
+  await expect(page.getByTestId('terminal-chaos')).toBeVisible()
+  expect(requested.length).toBe(1)
+})
