@@ -1,8 +1,10 @@
 // Railway entry point: serves dist/, the cached /api/* handlers and the
-// /job-tracker proxy. Env: PORT (default 3000), TRACKER_URL, GITHUB_TOKEN.
+// /job-tracker proxy. Env: PORT (default 3000), TRACKER_URL, GITHUB_TOKEN,
+// CANONICAL_HOST (production only: redirects www.<host> to https://<host>).
 import http from 'node:http'
 import process from 'node:process'
 import { createApp, DEFAULT_TRACKER_URL } from './server/app.js'
+import { parseCanonicalHost } from './server/canonical.js'
 
 function fail(message) {
   process.stderr.write(`${message}\n`)
@@ -14,9 +16,13 @@ const port = Number(rawPort)
 if (!/^\d+$/.test(rawPort) || port > 65535) fail(`Invalid PORT "${rawPort}": expected an integer from 0 to 65535`)
 
 const trackerUrl = process.env.TRACKER_URL || DEFAULT_TRACKER_URL
+// Empty means unset; anything else must be a bare hostname or startup fails.
+const rawCanonicalHost = process.env.CANONICAL_HOST || undefined
+let canonicalHost
 let app
 try {
-  app = createApp({ trackerUrl })
+  canonicalHost = parseCanonicalHost(rawCanonicalHost)
+  app = createApp({ trackerUrl, canonicalHost })
 } catch (err) {
   fail(`Could not start: ${err?.message ?? err}`)
 }
@@ -40,7 +46,8 @@ server.on('error', (err) => {
 
 server.listen(port, () => {
   const token = process.env.GITHUB_TOKEN ? 'set' : 'not set'
-  console.log(`devvjs-site listening on port ${port} (tracker: ${originOf(trackerUrl)}, GITHUB_TOKEN ${token})`)
+  const canonical = canonicalHost ? `, canonical host ${canonicalHost}` : ''
+  console.log(`devvjs-site listening on port ${port} (tracker: ${originOf(trackerUrl)}, GITHUB_TOKEN ${token}${canonical})`)
 })
 
 function shutdown(signal) {
