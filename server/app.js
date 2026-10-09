@@ -4,6 +4,7 @@ import express from 'express'
 import githubStats from '../api/github-stats.js'
 import projects from '../api/projects.js'
 import { cached } from './cache.js'
+import { canonicalRedirect } from './canonical.js'
 import { createTrackerProxy, DEFAULT_PROXY_TIMEOUT_MS } from './proxy.js'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -28,12 +29,17 @@ export function createApp({
   now = () => Date.now(),
   handlers = {},
   proxyTimeoutMs = DEFAULT_PROXY_TIMEOUT_MS,
+  canonicalHost,
 } = {}) {
   const { githubStats: ghHandler = githubStats, projects: prHandler = projects } = handlers
   const indexFile = path.join(distDir, 'index.html')
 
   const app = express()
   app.disable('x-powered-by')
+
+  // First of all: www.<canonicalHost> redirects to the canonical host, before
+  // the health check, the proxy and everything else. A no-op when unset.
+  app.use(canonicalRedirect(canonicalHost))
 
   app.get('/healthz', (req, res) => {
     res.json({ ok: true })
