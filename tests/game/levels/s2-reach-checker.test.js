@@ -237,4 +237,34 @@ describe('softlock rule (self-test)', () => {
   it('flags the same pit with its shaft filled (control)', () => {
     expect(softlockedCells(widePit({ shaft: false })).length).toBeGreaterThan(0)
   })
+
+  // The shaft in the floor ends in a spike 3 rows below any standable cell, so only the
+  // step-off fall outcome 'spikes' counts as a death here.
+  const spikeShaftPit = (bottom) => {
+    const plain = '#####.....####'
+    return parseLevel([
+      '..............',
+      '..............',
+      'P...........E.',
+      plain,
+      plain,
+      plain,
+      plain,
+      '#######.######',
+      '#######.######',
+      `#######${bottom}######`,
+    ])
+  }
+
+  it('does not flag a pit whose floor shaft ends in spikes far below', () => {
+    const map = spikeShaftPit('^')
+    expect(reachableCells(map).has(6 * map.width + 6)).toBe(true)
+    expect(softlockedCells(map)).toEqual([])
+  })
+
+  it('flags the same pit when the shaft ends in solid (control)', () => {
+    const bad = softlockedCells(spikeShaftPit('#'))
+    expect(bad).toContainEqual([6, 6])
+    expect(bad.length).toBeGreaterThan(0)
+  })
 })
