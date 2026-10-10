@@ -66,8 +66,8 @@ export function createApp({
     }),
   )
 
-  // SPA fallback, the same rule as vercel.json: no /api/, no /job-tracker,
-  // and no dot in the last path segment. A known route (src/routes.js) gets
+  // SPA fallback: no /api/, no /job-tracker, and no dot in the last path
+  // segment. A known route (src/routes.js) gets
   // index.html with 200; any other path gets index.html with a real 404, and
   // the app renders its 404 page.
   app.use((req, res, next) => {
