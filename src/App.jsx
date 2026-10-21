@@ -5,6 +5,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import Resume from './pages/Resume'
+import Privacy from './pages/Privacy'
 import NotFound from './pages/NotFound'
 import { ROUTES } from './routes'
 
@@ -67,6 +68,7 @@ function Site({ loading, onLoaded }) {
         <Routes>
           <Route path={ROUTES.home} element={<Home />} />
           <Route path={ROUTES.resume} element={<Resume />} />
+          <Route path={ROUTES.privacy} element={<Privacy />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

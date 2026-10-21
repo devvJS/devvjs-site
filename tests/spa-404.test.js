@@ -45,7 +45,7 @@ describe('unknown paths get a real 404 with the SPA shell', () => {
 })
 
 describe('known routes keep sending 200 with index.html', () => {
-  it.each(['/', '/resume', '/resume/', '/terminal-chaos', '/terminal-chaos/'])('%s', async (p) => {
+  it.each(['/', '/privacy', '/privacy/', '/resume', '/resume/', '/terminal-chaos', '/terminal-chaos/'])('%s', async (p) => {
     const res = await request(app).get(p)
     expect(res.status).toBe(200)
     expect(res.text).toContain('SPA-INDEX')
