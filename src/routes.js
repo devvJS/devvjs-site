@@ -3,6 +3,7 @@
 export const ROUTES = Object.freeze({
   home: '/',
   resume: '/resume',
+  privacy: '/privacy',
   game: '/terminal-chaos',
 })
 
