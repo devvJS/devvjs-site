@@ -1,3 +1,6 @@
+import { Link } from 'react-router-dom'
+import { ROUTES } from '../routes'
+
 const SOCIAL_LINKS = [
   { href: 'https://github.com', label: 'GitHub', symbol: 'gh' },
   { href: 'https://linkedin.com', label: 'LinkedIn', symbol: 'in' },
@@ -16,6 +19,14 @@ function Footer() {
             © {year} devvJS — built with React + Tailwind
           </p>
           <ul className="flex items-center gap-4">
+            <li>
+              <Link
+                to={ROUTES.privacy}
+                className="font-mono text-sm text-text-primary hover:text-accent-cyan transition-colors border border-text-secondary/40 rounded px-2 py-1 hover:border-accent-cyan"
+              >
+                Privacy
+              </Link>
+            </li>
             {SOCIAL_LINKS.map((link) => (
               <li key={link.label}>
                 <a
